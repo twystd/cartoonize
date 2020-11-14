@@ -16,24 +16,12 @@ import flask
 from PIL import Image
 import numpy as np
 import skvideo.io
-if opts['colab-mode']:
-    from flask_ngrok import run_with_ngrok #to run the application on colab using ngrok
 
-
+from flask_ngrok import run_with_ngrok #to run the application on colab using ngrok
 from cartoonize import WB_Cartoonize
 
-if not opts['run_local']:
-    if 'GOOGLE_APPLICATION_CREDENTIALS' in os.environ:
-        from gcloud_utils import upload_blob, generate_signed_url, delete_blob, download_video
-    else:
-        raise Exception("GOOGLE_APPLICATION_CREDENTIALS not set in environment variables")
-    from video_api import api_request
-    # Algorithmia (GPU inference)
-    import Algorithmia
-
 app = Flask(__name__)
-if opts['colab-mode']:
-    run_with_ngrok(app)   #starts ngrok when the app is run
+run_with_ngrok(app)   #starts ngrok when the app is run
 
 app.config['UPLOAD_FOLDER_VIDEOS'] = 'static/uploaded_videos'
 app.config['CARTOONIZED_FOLDER'] = 'static/cartoonized_images'
@@ -171,8 +159,4 @@ def cartoonize():
         return render_template("index_cartoonized.html")
 
 if __name__ == "__main__":
-    # Commemnt the below line to run the Appication on Google Colab using ngrok
-    if opts['colab-mode']:
-        app.run()
-    else:
-        app.run(debug=False, host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
+   app.run()
