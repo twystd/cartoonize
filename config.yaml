@@ -1,7 +1,11 @@
 ---
-run_local: true 
-gpu: true 
-trim-video: false 
-original_frame_rate: true 
-colab-mode: true 
+run_local: true
+gpu: true
+trim-video: false
+trim-video-length: 15
+original_frame_rate: true
+output_frame_rate: '24/1' #Set the output frame rate, if original resolution
+colab-mode: true
 original_resolution: true # Set to true if you don't want to resize the original video
+resize-dim: 720 
+
