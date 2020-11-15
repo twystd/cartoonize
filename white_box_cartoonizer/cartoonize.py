@@ -73,7 +73,7 @@ class WB_Cartoonize:
         saver.restore(self.sess, tf.train.latest_checkpoint(weights_dir))
 
     def infer(self, image):
-#       image = self.resize_crop(image)
+        image = self.resize_crop(image)
         batch_image = image.astype(np.float32)/127.5 - 1
         batch_image = np.expand_dims(batch_image, axis=0)
         
