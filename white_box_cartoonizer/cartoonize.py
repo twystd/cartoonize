@@ -12,6 +12,7 @@ import sys
 import cv2
 import numpy as np
 import skvideo.io
+
 try:
     import tensorflow.compat.v1 as tf
 except ImportError:
@@ -72,7 +73,7 @@ class WB_Cartoonize:
         saver.restore(self.sess, tf.train.latest_checkpoint(weights_dir))
 
     def infer(self, image):
-        image = self.resize_crop(image)
+#       image = self.resize_crop(image)
         batch_image = image.astype(np.float32)/127.5 - 1
         batch_image = np.expand_dims(batch_image, axis=0)
         
@@ -85,49 +86,43 @@ class WB_Cartoonize:
         
         return output
     
-    def process_video(self, fname, frame_rate):
-        ## Capture video using opencv
-        cap = cv2.VideoCapture(fname)
-
-        target_size = (int(cap.get(3)),int(cap.get(4)))
-        output_fname = os.path.abspath('{}/{}-{}.mp4'.format(fname.replace(os.path.basename(fname), ''),str(uuid.uuid4())[:7],os.path.basename(fname).split('.')[0]))
-
-        out = skvideo.io.FFmpegWriter(output_fname, inputdict={'-r':frame_rate}, outputdict={'-r':frame_rate})
+    def process_video(self, source):
+        cap         = cv2.VideoCapture(source)
+#       target_size = (int(cap.get(3)),int(cap.get(4)))
+        cartoonized = os.path.abspath('/content/cartoonized.mp4'))
+        final       = os.path.abspath('/content/final.mp4'))
+#       out         = skvideo.io.FFmpegWriter(destination, inputdict={'-r':frame_rate}, outputdict={'-r':frame_rate})
+        out         = skvideo.io.FFmpegWriter(cartoonized)
 
         while True:
-            ret, frame = cap.read()
-            
-            if ret:
-                
-                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                
-                frame = self.infer(frame)
-                
-                frame = cv2.resize(frame, target_size)
-                
-                out.writeFrame(frame)
-                
-            else:
-                break
+              ret, frame = cap.read()
+              if ret:
+                 frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                 frame = self.infer(frame)
+#                frame = cv2.resize(frame, target_size)
+
+                 out.writeFrame(frame)
+              else:
+                 break
         cap.release()
         out.close()
-        
-        final_name = '{}final_{}'.format(fname.replace(os.path.basename(fname), ''), os.path.basename(output_fname))
 
-        p = subprocess.Popen(['ffmpeg','-i','{}'.format(output_fname), "-pix_fmt", "yuv420p", final_name])
+        p = subprocess.Popen(['ffmpeg','-i','{}'.format(cartoonized), "-pix_fmt", "yuv420p", final])
         p.communicate()
         p.wait()
 
-        os.system("rm "+output_fname)
-
-        return final_name
+#       os.system("rm "+output_fname)
 
 if __name__ == '__main__':
-    gpu = len(sys.argv) < 2 or sys.argv[1] != '--cpu'
-    wbc = WB_Cartoonize(os.path.abspath('saved_models'), gpu)
-    img = cv2.imread('test.jpg')
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    cartoon_image = wbc.infer(img)
-    import matplotlib.pyplot as plt
-    plt.imshow(cartoon_image)
-    plt.show()
+   gpu = True
+   wbc = WB_Cartoonize(os.path.abspath('saved_models'), gpu)
+   wbc.process_video(os.path.abspath('/content/video.mp4'), gpu)
+
+#   gpu = len(sys.argv) < 2 or sys.argv[1] != '--cpu'
+#   wbc = WB_Cartoonize(os.path.abspath('saved_models'), gpu)
+#   img = cv2.imread('test.jpg')
+#   img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+#   cartoon_image = wbc.infer(img)
+#   import matplotlib.pyplot as plt
+#   plt.imshow(cartoon_image)
+#   plt.show()
