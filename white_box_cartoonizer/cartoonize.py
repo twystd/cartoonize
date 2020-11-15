@@ -89,8 +89,8 @@ class WB_Cartoonize:
     def process_video(self, source):
         cap         = cv2.VideoCapture(source)
 #       target_size = (int(cap.get(3)),int(cap.get(4)))
-        cartoonized = os.path.abspath('/content/cartoonized.mp4'))
-        final       = os.path.abspath('/content/final.mp4'))
+        cartoonized = os.path.abspath('/content/cartoonized.mp4')
+        final       = os.path.abspath('/content/final.mp4')
 #       out         = skvideo.io.FFmpegWriter(destination, inputdict={'-r':frame_rate}, outputdict={'-r':frame_rate})
         out         = skvideo.io.FFmpegWriter(cartoonized)
 
