@@ -116,7 +116,7 @@ class WB_Cartoonize:
 if __name__ == '__main__':
    gpu = True
    wbc = WB_Cartoonize(os.path.abspath('saved_models'), gpu)
-   wbc.process_video(os.path.abspath('/content/video.mp4'), gpu)
+   wbc.process_video(os.path.abspath('/content/video.mp4'))
 
 #   gpu = len(sys.argv) < 2 or sys.argv[1] != '--cpu'
 #   wbc = WB_Cartoonize(os.path.abspath('saved_models'), gpu)
